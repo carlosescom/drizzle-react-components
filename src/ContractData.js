@@ -18,7 +18,7 @@ class ContractData extends Component {
     // Fetch initial value from chain and return cache key for reactive updates.
     var method = this.contracts[this.props.contract].methods[this.props.method];
     var methodArgs = this.props.methodArgs ? this.props.methodArgs : [];
-    var dataKey = method.cacheCall(...methodArgs);
+    this.dataKey = method.cacheCall(...methodArgs);
 
     this.state = {dataKey};
   }

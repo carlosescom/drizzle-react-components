@@ -20,7 +20,7 @@ class ContractData extends Component {
     var methodArgs = this.props.methodArgs ? this.props.methodArgs : [];
     this.dataKey = method.cacheCall(...methodArgs);
 
-    this.state = {dataKey};
+    this.state = {dataKey: this.dataKey};
   }
 
   componentDidUpdate(prevProps) {

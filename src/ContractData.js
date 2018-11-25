@@ -16,10 +16,23 @@ class ContractData extends Component {
     const abi = this.contracts[this.props.contract].abi;
 
     // Fetch initial value from chain and return cache key for reactive updates.
-    var methodArgs = this.props.methodArgs ? this.props.methodArgs : []
-    this.dataKey = this.contracts[this.props.contract].methods[this.props.method].cacheCall(...methodArgs)
+    var method = this.contracts[this.props.contract].methods[this.props.method];
+    var methodArgs = this.props.methodArgs ? this.props.methodArgs : [];
+    var dataKey = method.cacheCall(...methodArgs);
+
+    this.state = {dataKey};
   }
 
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.methodArgs !== prevProps.methodArgs) {
+      let method = this.contracts[this.props.contract].methods[this.props.method];
+      let methodArgs = this.props.methodArgs ? this.props.methodArgs : [];
+      let dataKey = method.cacheCall(...methodArgs);
+      this.setState({dataKey});
+    }
+  }
+  
   render() {
     // Contract is not yet intialized.
     if(!this.props.contracts[this.props.contract].initialized) {
@@ -29,7 +42,7 @@ class ContractData extends Component {
     }
 
     // If the cache key we received earlier isn't in the store yet; the initial value is still being fetched.
-    if(!(this.dataKey in this.props.contracts[this.props.contract][this.props.method])) {
+    if(!(this.state.dataKey in this.props.contracts[this.props.contract][this.props.method])) {
       return (
         <span>Fetching...</span>
       )
@@ -43,7 +56,7 @@ class ContractData extends Component {
       pendingSpinner = ''
     }
 
-    var displayData = this.props.contracts[this.props.contract][this.props.method][this.dataKey].value
+    var displayData = this.props.contracts[this.props.contract][this.props.method][this.state.dataKey].value
 
     // Optionally convert to UTF8
     if (this.props.toUtf8) {

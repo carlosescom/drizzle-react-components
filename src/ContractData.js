@@ -24,12 +24,13 @@ class ContractData extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
-    if (this.props.methodArgs !== prevProps.methodArgs) {
-      let method = this.contracts[this.props.contract].methods[this.props.method];
-      let methodArgs = this.props.methodArgs ? this.props.methodArgs : [];
-      let dataKey = method.cacheCall(...methodArgs);
-      this.setState({dataKey});
+    if(this.props.methodArgs){
+      if(JSON.stringify(this.props.methodArgs) !== JSON.stringify(prevProps.methodArgs)){
+        var method = this.contracts[this.props.contract].methods[this.props.method];
+        this.setState({
+          dataKey: method.cacheCall.apply(method, _toConsumableArray(this.props.methodArgs))
+        });
+      }
     }
   }
   

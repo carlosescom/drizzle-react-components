@@ -1,11 +1,4 @@
-import { drizzleConnect } from 'drizzle-react'
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-
-/*
- * Create component.
- */
-
 class ContractData extends Component {
   constructor(props) {
     super(props)
@@ -26,95 +19,57 @@ class ContractData extends Component {
     }
   }
   
-  render() {
-    // Contract is not yet intialized.
-    if(!this.props.contracts[this.props.contract].initialized) {
-      return (
-        <span>Initializing...</span>
-      )
-    }
-
-    // If the cache key we received earlier isn't in the store yet; the initial value is still being fetched.
-    if(!(this.state.dataKey in this.props.contracts[this.props.contract][this.props.method])) {
-      return (
-        <span>Fetching...</span>
-      )
-    }
-
-    // Show a loading spinner for future updates.
-    var pendingSpinner = this.props.contracts[this.props.contract].synced ? '' : ' 🔄'
-
-    // Optionally hide loading spinner (EX: ERC20 token symbol).
-    if (this.props.hideIndicator) {
-      pendingSpinner = ''
-    }
-
-    var displayData = this.props.contracts[this.props.contract][this.props.method][this.state.dataKey].value
-
-    // Optionally convert to UTF8
-    if (this.props.toUtf8) {
-      displayData = this.context.drizzle.web3.utils.hexToUtf8(displayData)
-    }
-
-    // Optionally convert to Ascii
-    if (this.props.toAscii) {
-      displayData = this.context.drizzle.web3.utils.hexToAscii(displayData)
-    }
-
-    // If return value is an array
-    if (typeof displayData === 'array') {
-      const displayListItems = displayData.map((datum, index) => {
-        <li key={index}>{`${datum}`}{pendingSpinner}</li>
-      })
-
-      return(
-        <ul>
-          {displayListItems}
-        </ul>
-      )
-    }
-
-    // If retun value is an object
-    if (typeof displayData === 'object') {
-      var i = 0
-      const displayObjectProps = []
-
-      Object.keys(displayData).forEach((key) => {
-        if (i != key) {
-          displayObjectProps.push(<li key={i}>
-            <strong>{key}</strong>{pendingSpinner}<br/>
-            {`${displayData[key]}`}
-          </li>)
-        }
-
-        i++
-      })
-
-      return(
-        <ul>
-          {displayObjectProps}
-        </ul>
-      )
-    }
-
-    return(
-      <span>{`${displayData}`}{pendingSpinner}</span>
-    )
-  }
+	render() {
+		const { drizzle, drizzleState } = this.props;
+ 		// Contract is not yet intialized.
+		if(!drizzleState.contracts[this.props.contract].initialized) {
+			return (
+				<span>Initializing...</span>
+			);
+		}
+	
+		// If the cache key we received earlier isn't in the store yet; the initial value is still being fetched.
+		if(!(this.state.dataKey in drizzleState.contracts[this.props.contract][this.props.method])) {
+			return null;
+		}
+ 		// Show a loading spinner for future updates.
+		var pendingSpinner = drizzleState.contracts[this.props.contract].synced ? '' : ' 🔄';
+		
+		// Optionally hide loading spinner (EX: ERC20 token symbol).
+		if (this.props.hideIndicator) {
+			pendingSpinner = '';
+		}
+ 		var displayData = drizzleState.contracts[this.props.contract][this.props.method][this.state.dataKey].value;
+		
+		if (displayData instanceof Object) {
+			displayData = Object.values(displayData);
+		}
+ 		if (this.props.displayFunc) {
+			return this.props.displayFunc(displayData);
+		}
+ 		// Need to convert on an per-item basis for Objects/arrays.
+ 		// Optionally convert to UTF8
+		if (this.props.toUtf8) {
+			displayData = drizzle.web3.utils.hexToUtf8(displayData);
+		}
+		
+		// Optionally convert to Ascii
+		if (this.props.toAscii) {
+			displayData = drizzle.web3.utils.hexToAscii(displayData);
+		}
+ 		if (displayData instanceof Array) {
+			const displayListItems = displayData.map((datum, i) => (
+				<li key={i}>{datum}{pendingSpinner}</li>
+			));
+			return (
+				<ul>{displayListItems}</ul>
+			);
+		}
+      
+		return (
+			<span>{displayData}{pendingSpinner}</span>
+		);
+	}
 }
 
-ContractData.contextTypes = {
-  drizzle: PropTypes.object
-}
-
-/*
- * Export connected component.
- */
-
-const mapStateToProps = state => {
-  return {
-    contracts: state.contracts
-  }
-}
-
-export default drizzleConnect(ContractData, mapStateToProps)
+export default ContractData;

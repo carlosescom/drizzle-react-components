@@ -11,6 +11,7 @@ process.env.BABEL_ENV = 'production';
       path: path.resolve(__dirname, 'dist')
   },
   module: {
+<<<<<<< HEAD
       loaders: [{
           test: /\.(js)$/,
           include: path.resolve(__dirname, 'src'),
@@ -25,6 +26,22 @@ process.env.BABEL_ENV = 'production';
               } */
           }]
       }]
+=======
+    loaders: [{
+      test: /\.(js)$/,
+      include: path.resolve(__dirname, 'src'),
+      use: [{
+        loader: 'babel-loader',
+        query: {
+          presets: ['es2015','react']
+        }/* ,
+        options: {
+          presets: ['react'],
+          plugins: [require('babel-plugin-transform-class-properties'), require('babel-plugin-transform-object-rest-spread')]
+        } */
+      }]
+    }]
+>>>>>>> 5d87d8e... Actually fixed indentation.
   },
   externals: [
       'drizzle',

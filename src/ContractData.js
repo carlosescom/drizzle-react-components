@@ -13,7 +13,7 @@ class ContractData extends Component {
     if(this.props.methodArgs){
       if(JSON.stringify(this.props.methodArgs) !== JSON.stringify(prevProps.methodArgs)){
         this.setState({
-          dataKey: this.method.cacheCall.apply(method, _toConsumableArray(this.props.methodArgs))
+          dataKey: this.method.cacheCall(this.props.methodArgs)
         });
       }
     }

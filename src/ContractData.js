@@ -7,23 +7,20 @@ import PropTypes from 'prop-types'
  */
 
 class ContractData extends Component {
-  constructor(props, context) {
+  constructor(props) {
     super(props)
 
-    this.contracts = context.drizzle.contracts;
-
     // Fetch initial value from chain and return cache key for reactive updates.
-    var method = this.contracts[this.props.contract].methods[this.props.method];
+    this.method = this.props.drizzle.contracts[this.props.contract].methods[this.props.method];
     var methodArgs = this.props.methodArgs ? this.props.methodArgs : [];
-    this.state = {dataKey: method.cacheCall(...methodArgs)};
+    this.state = {dataKey: this.method.cacheCall(...methodArgs)};
   }
 
   componentDidUpdate(prevProps) {
     if(this.props.methodArgs){
       if(JSON.stringify(this.props.methodArgs) !== JSON.stringify(prevProps.methodArgs)){
-        var method = this.contracts[this.props.contract].methods[this.props.method];
         this.setState({
-          dataKey: method.cacheCall.apply(method, _toConsumableArray(this.props.methodArgs))
+          dataKey: this.method.cacheCall.apply(method, _toConsumableArray(this.props.methodArgs))
         });
       }
     }

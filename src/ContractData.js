@@ -1,4 +1,8 @@
+import { drizzleConnect } from 'drizzle-react'
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+
+
 class ContractData extends Component {
   constructor(props) {
     super(props)

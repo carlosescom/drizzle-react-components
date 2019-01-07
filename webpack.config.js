@@ -19,11 +19,7 @@ process.env.BABEL_ENV = 'production';
         query: {
           presets: ['es2015', 'react'],
           plugins: [require('babel-plugin-transform-class-properties'), require('babel-plugin-transform-object-rest-spread')]
-        }/* ,
-        options: {
-          presets: ['react'],
-          plugins: [require('babel-plugin-transform-class-properties'), require('babel-plugin-transform-object-rest-spread')]
-        } */
+        }
       }]
     }]
   },
